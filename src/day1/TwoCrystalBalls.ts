@@ -1,18 +1,22 @@
 export default function two_crystal_balls(breaks: boolean[]): number {
-    let j = 0;
+    let n = breaks.length;
     let i = 0;
-    for (i; i < breaks.length; i = i + Math.floor(Math.sqrt(breaks.length))) {
-        if (breaks[i] === true) {
+    let j = 0;
+    let result = -1;
+
+    for (i; i < n; i += Math.floor(Math.sqrt(breaks.length))) {
+        if (breaks[i]) {
+            i = Math.floor(i - Math.floor(Math.sqrt(breaks.length)));
             break;
         }
-        j = i;
     }
 
-    for (j; j < i; j++) {
-        if (breaks[j] === true) {
-            return j;
+    for (j = i; j < n; j++) {
+        if (breaks[j]) {
+            result = j;
+            break;
         }
     }
 
-    return -1;
+    return result;
 }
