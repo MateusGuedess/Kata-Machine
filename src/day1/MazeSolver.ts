@@ -1,13 +1,25 @@
+const dir = [
+    [0, -1],
+    [1, 0],
+    [0, 1],
+    [-1, 0],
+];
 function walk(
     maze: string[],
     wall: string,
     curr: Point,
     end: Point,
     seen: boolean[][],
+    path: Point[],
 ): boolean {
     // 1. Base Case
     // off the map
-    if (curr.x < 0 || curr.x >= maze[0].length || curr.y < 0 || maze.length) {
+    if (
+        curr.x < 0 ||
+        curr.x >= maze[0].length ||
+        curr.y < 0 ||
+        curr.y > maze.length
+    ) {
         return false;
     }
 
@@ -18,6 +30,7 @@ function walk(
 
     // got where we want to go
     if (curr.x === end.x && curr.y === end.y) {
+        path.push(end);
         return true;
     }
 
@@ -25,6 +38,27 @@ function walk(
     if (seen[curr.y][curr.x]) {
         return false;
     }
+
+    // 3 recurse
+    // pre
+    seen[curr.y][curr.x] = true;
+    path.push(curr);
+
+    for (let i = 0; i < dir.length; i++) {
+        const [x, y] = dir[i];
+        const nextPossiblePosition = {
+            x: curr.x + x,
+            y: curr.y + y,
+        };
+        if (walk(maze, wall, nextPossiblePosition, end, seen, path)) {
+            return true;
+        }
+    }
+
+    // recurse
+    // post
+    path.pop();
+    return false;
 }
 
 export default function solve(
@@ -32,4 +66,15 @@ export default function solve(
     wall: string,
     start: Point,
     end: Point,
-): Point[] {}
+): Point[] {
+    const seen: boolean[][] = [];
+    const path: Point[] = [];
+
+    for (let i = 0; i < maze.length; ++i) {
+        seen.push(new Array(maze[0].length).fill(false));
+    }
+
+    walk(maze, wall, start, end, seen, path);
+    console.log("PATH: ", path);
+    return path;
+}
